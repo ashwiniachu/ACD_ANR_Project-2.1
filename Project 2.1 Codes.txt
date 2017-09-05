@@ -1,0 +1,54 @@
+#Reading the data#
+dvdsales<-read.csv("C:/All/R language/Final Project/fwdproject2/Sales_dataset.csv",header=TRUE)
+dvdsales
+View(dvdsales)
+names(dvdsales)
+class(dvdsales$attractiveness)
+
+#Correlation betwwen predictors and response variable#
+cor(dvdsales$sales,dvdsales$advertise)
+cor(dvdsales$sales,dvdsales$plays)
+cor(dvdsales$sales,dvdsales$attractiveness)
+
+#Conversion from numeric to factor
+dvdsales$attractiveness<-as.factor(dvdsales$attractiveness)
+class(dvdsales$attractiveness)
+summary(dvdsales)
+nrow(dvdsales)
+
+#Split the data into 70 and 30#
+set.seed(1)
+dvdds<-sample(nrow(dvdsales),nrow(dvdsales)*0.7)
+
+#Conversion of changing qualifying into levels#
+dvdsales$attractiveness1<-ifelse(dvdsales$attractiveness< 3,1,ifelse(dvdsales$attractiveness< 5,2,ifelse(dvdsales$attractiveness< 7,3,ifelse(dvdsales$attractiveness< 9,4,5))))
+dvdsales$attractiveness1<-as.factor(dvdsales$attractiveness1)
+dvdsales$attractiveness<-as.factor(dvdsales$attractiveness)
+summary(dvdsales)
+
+#attractiveness isnt required since its been qulaifies into levels
+dvdtrain<-dvdsales[dvdds,-4]
+summary(dvdtrain)
+dvdtest<-dvdsales[-dvdds,-4]
+summary(dvdtest)
+
+#target variable is not required in test and train input
+dvdt<-dvdtest[,-2]
+dvdt
+
+#Model Creation
+smod1<-lm(sales~.,data=dvdtrain)
+summary(smod1)
+
+#Verifying Assumptions in model
+plot(smod1)
+
+#Prediction in test data
+dvdt$testres<-predict(smod1,newdata = dvdt)
+summary(dvdt)
+dvdt$testres
+
+
+
+
+
